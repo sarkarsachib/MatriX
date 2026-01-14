@@ -26,6 +26,9 @@ from output_engine.output_system import OutputEngine, TerminalInterface
 from training_loop import LiveTrainingLoop, TRAINING_CONFIG
 from training_loop.self_evolving_algorithms import SelfEvolvingLearningAlgorithms
 
+# Import Direction Mode components
+from sathik_ai.direction_mode import DirectionModeController, SubmodeStyle
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -230,6 +233,16 @@ class SathikAI:
         else:
             self.sela = None
         
+        # 9. Initialize Direction Mode Controller
+        logger.info("Initializing Direction Mode Controller...")
+        direction_mode_config = {
+            \'google_api_key\': self.config.get(\'google_api_key\'),
+            \'google_cse_id\': self.config.get(\'google_cse_id\'),
+            \'news_api_key\': self.config.get(\'news_api_key\'),
+            \'knowledge_db_path\': \'direction_mode_knowledge.db\'
+        }
+        self.direction_mode = DirectionModeController(direction_mode_config)
+        
         logger.info("All components initialized successfully!")
     
     def _setup_truth_sources(self):
@@ -253,7 +266,9 @@ class SathikAI:
         for source, reliability in reliable_sources.items():
             self.truth_comparator.add_source_reliability(source, reliability)
     
-    def process_query(self, query: str, user_id: str = "default", output_mode: str = None) -> Dict[str, Any]:
+    def process_query(self, query: str, user_id: str = "default", output_mode: str = None,
+                    mode: str = "trained", submode: str = "normal", 
+                    format_type: str = "comprehensive") -> Dict[str, Any]:
         """
         Process a user query through the complete Sathik AI pipeline
         
@@ -261,6 +276,9 @@ class SathikAI:
             query: User input query
             user_id: User identifier for personalization
             output_mode: Desired output mode (text, code, audio, command)
+            mode: Processing mode ("trained" for neural network, "direction" for RAG)
+            submode: Response style sub-mode (normal, sugarcotted, unhinged, reaper, 666)
+            format_type: Answer format (comprehensive, summary, bullet_points)
         
         Returns:
             Dictionary containing the response and analysis
@@ -270,6 +288,48 @@ class SathikAI:
         
         logger.info(f"Processing query from user {user_id}: {query[:50]}...")
         
+        try:
+            # Route to appropriate mode
+            if mode.lower() == "direction":
+                logger.info(f"Using Direction Mode for query: {query[:50]}...")
+                return asyncio.run(self.direction_mode.process_query_direction_mode(
+                    query=query,
+                    user_id=user_id,
+                    submode=submode,
+                    format_type=format_type
+                ))
+            elif mode.lower() == "trained":
+                logger.info(f"Using Trained Mode for query: {query[:50]}...")
+                return self._process_trained_mode_query(query, user_id, output_mode, mode, submode, format_type)
+            else:
+                return {
+                    'error': f'Unknown mode: {mode}. Use "trained" or "direction"',
+                    'status': 'error'
+                }
+        
+        except Exception as e:
+            logger.error(f"Error processing query: {e}", exc_info=True)
+            return {
+                'response': 'An error occurred while processing your query.',
+                'error': str(e),
+                'status': 'error'
+            }
+    
+    def _process_trained_mode_query(self, query: str, user_id: str, output_mode: str, mode: str, submode: str, format_type: str) -> Dict[str, Any]:
+        """
+        Process query using trained neural network mode
+        
+        Args:
+            query: User input query
+            user_id: User identifier for personalization
+            output_mode: Desired output mode (text, code, audio, command)
+            mode: Processing mode
+            submode: Response style sub-mode
+            format_type: Answer format
+            
+        Returns:
+            Dictionary containing the response and analysis
+        """
         try:
             # 1. Content Safety Check
             if self.config[\'enable_content_filter\']:
@@ -467,6 +527,8 @@ class SathikAI:
             def __init__(self, sathik_system):
                 self.sathik = sathik_system
                 self.running = False
+                self.current_mode = "trained"  # trained or direction
+                self.current_submode = "normal"  # normal, sugarcotted, unhinged, reaper, 666
             
             def start(self):
                 self.running = True
@@ -537,28 +599,35 @@ class SathikAI:
                         print(f"❌ Error: {e}")
             
             def show_help(self):
-                help_text = """
+                help_text = f"""
 🔥 SATHIK AI COMMANDS:
 - help: Show this help message
 - quit/exit: Exit the terminal
-- mode <mode>: Change output mode (text, code, audio, command)
+- mode <mode>: Change processing mode (trained, direction)
+- submode <style>: Change response style (normal, sugarcotted, unhinged, reaper, 666)
 - status: Show system status
 - memory: Show memory system status
-- sela_cycle: Manually trigger a SELA continuous improvement cycle
+- direction_status: Show Direction Mode status
+- clear_cache: Clear Direction Mode cache
+- search <query>: Debug search in Direction Mode
+- sources: Show last sources used
+- stats: Show knowledge base statistics
 
-🧠 NEURAL CORE FEATURES:
-- Quantum-Inspired Transformer + Recursive Mixture of Experts (R-MoE)
-- Quantum Superposition, Entanglement, Interference Layers
-- 1000+ Multi-Head Attention layers
-- Emotion-aware processing
-- Real-time web learning
-- Infinite Adaptive Memory System (IAMS)
-- Truth validation and bias detection
-- Self-healing error correction
-- Self-Evolving Learning Algorithms (SELA)
+🔍 DIRECTION MODE FEATURES:
+- Multi-source search (Google, Wikipedia, DuckDuckGo, ArXiv, News)
+- Fact extraction and validation
+- Citation tracking
+- Response styling (4 sub-modes)
+- Knowledge caching
 
-Current mode: {}
-                """.format(self.sathik.output_engine.current_mode)
+🧠 TRAINED MODE FEATURES:
+- Neural network inference
+- Quantum-inspired processing
+- Memory system integration
+
+Current processing mode: {self.current_mode}
+Current sub-mode: {self.current_submode}
+                """
                 print(help_text)
             
             def show_status(self):
