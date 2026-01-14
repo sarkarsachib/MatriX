@@ -637,41 +637,124 @@ console.log(response.answer);
 
 ---
 
-## WebSocket API
+## HTTP POST /query (Extended)
 
-Real-time query processing with WebSocket support.
-
-### Connect
-
-```javascript
-const ws = new WebSocket('ws://localhost:8000/ws');
-```
-
-### Submit Query
-
+**Request Body Schema:**
 ```json
 {
-  "type": "query",
-  "data": {
-    "query": "What is natural language processing?",
-    "mode": "direction",
-    "submode": "sugarcotted",
-    "format_type": "comprehensive"
-  }
+  "query": "string (required)",
+  "user_id": "string (optional, default: 'default')",
+  "mode": "string (optional: 'direction' or 'trained')",
+  "submode": "string (optional: 'normal', 'sugarcotted', 'unhinged', 'reaper', '666')",
+  "format_type": "string (optional: 'comprehensive', 'summary', 'bullet_points')",
+  "output_mode": "string (optional: 'text', 'code', 'audio', 'command')"
 }
 ```
 
-### Receive Response
-
+**Response Schema:**
 ```json
 {
-  "type": "response",
-  "data": {
-    "query": "What is natural language processing?",
-    "answer": "💖 Hi sweetie! Natural language processing is...",
-    "status": "success",
-    "confidence": 0.87
-  }
+  "status": "string ('success' or 'error')",
+  "answer": "string (the response)",
+  "mode": "string (which mode was used)",
+  "submode": "string (which submode was used)",
+  "confidence": "number (0-1 confidence score)",
+  "sources": "array (source objects)",
+  "citations": "array (citation objects)",
+  "timestamp": "string (ISO 8601 timestamp)",
+  "processing_time": "number (seconds)",
+  "query_id": "string (unique identifier)"
+}
+```
+
+**Example 1: Sugarcotted Mode**
+```bash
+curl -X POST http://localhost:8000/query \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "What is machine learning?",
+    "mode": "direction",
+    "submode": "sugarcotted",
+    "format_type": "comprehensive"
+  }'
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "answer": "💖 Hi sweetie! Machine learning is like teaching computers to learn, just like how you learn new things every day! ✨ It's such a wonderful technology that helps us solve amazing problems! 🌈",
+  "mode": "direction",
+  "submode": "sugarcotted",
+  "confidence": 0.92,
+  "sources": [
+    {
+      "title": "Introduction to Machine Learning",
+      "url": "https://example.com/ml-guide",
+      "type": "educational"
+    }
+  ],
+  "citations": [
+    {
+      "number": 1,
+      "fact": "Machine learning algorithms improve through experience",
+      "source": "Educational Resource"
+    }
+  ],
+  "timestamp": "2024-01-14T15:30:00Z",
+  "processing_time": 1.45,
+  "query_id": "ml-12345"
+}
+```
+
+**Example 2: Unhinged Mode**
+```bash
+curl -X POST http://localhost:8000/query \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "Explain climate change",
+    "mode": "direction",
+    "submode": "unhinged",
+    "format_type": "summary"
+  }'
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "answer": "Look, climate change is happening because humans are pumping greenhouse gases into the atmosphere. It's not that complicated - we're literally cooking ourselves and the planet. But hey, maybe we'll figure it out before we make Earth uninhabitable!",
+  "mode": "direction",
+  "submode": "unhinged",
+  "confidence": 0.88,
+  "sources": [
+    {
+      "title": "IPCC Climate Report 2023",
+      "url": "https://ipcc.ch/report2023/",
+      "type": "scientific"
+    }
+  ],
+  "citations": [
+    {
+      "number": 1,
+      "fact": "Global temperature has risen 1.1°C since pre-industrial times",
+      "source": "IPCC 2023"
+    }
+  ],
+  "timestamp": "2024-01-14T15:31:00Z",
+  "processing_time": 1.23,
+  "query_id": "climate-67890"
+}
+```
+
+**Example 3: Error Response**
+```json
+{
+  "status": "error",
+  "error": "Validation failed",
+  "details": "Query parameter is required and cannot be empty",
+  "timestamp": "2024-01-14T15:32:00Z",
+  "query_id": "error-001"
 }
 ```
 
