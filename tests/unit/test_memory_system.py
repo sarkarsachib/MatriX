@@ -32,6 +32,12 @@ class TestUltraShortTermMemory:
     
     @pytest.fixture
     def ustm(self):
+        """
+        Create a short-term memory configured with capacity 10.
+        
+        Returns:
+            UltraShortTermMemory: An UltraShortTermMemory instance with capacity set to 10.
+        """
         return UltraShortTermMemory(capacity=10)
     
     def test_initialization(self, ustm):
@@ -77,10 +83,22 @@ class TestActiveWorkingMemory:
     
     @pytest.fixture
     def awm(self):
+        """
+        Create a configured ActiveWorkingMemory instance for tests.
+        
+        Returns:
+            ActiveWorkingMemory: An ActiveWorkingMemory with d_model=128, capacity=10, and num_heads=4.
+        """
         return ActiveWorkingMemory(d_model=128, capacity=10, num_heads=4)
     
     @pytest.fixture
     def input_embedding(self):
+        """
+        Provide a sample input embedding tensor for tests.
+        
+        Returns:
+            torch.Tensor: A random tensor of shape (2, 1, 128) sampled from a standard normal distribution.
+        """
         return torch.randn(2, 1, 128)
     
     def test_initialization(self, awm):
@@ -121,6 +139,12 @@ class TestLongTermKnowledgeBase:
     
     @pytest.fixture
     def temp_db(self):
+        """
+        Provide a filesystem path to a temporary JSON file and remove the file after the caller finishes.
+        
+        Returns:
+            str: Path to the temporary JSON file created for the test.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             temp_path = f.name
         yield temp_path
@@ -128,6 +152,15 @@ class TestLongTermKnowledgeBase:
     
     @pytest.fixture
     def ltkb(self, temp_db):
+        """
+        Create a LongTermKnowledgeBase instance configured for tests.
+        
+        Parameters:
+            temp_db (str | pathlib.Path): Filesystem path to a temporary JSON storage file used for persistence.
+        
+        Returns:
+            LongTermKnowledgeBase: An LTKB initialized with the given storage path and an embedding dimension of 128.
+        """
         return LongTermKnowledgeBase(storage_path=temp_db, embedding_dim=128)
     
     def test_initialization(self, ltkb, temp_db):
@@ -189,6 +222,12 @@ class TestInfiniteAdaptiveMemorySystem:
     
     @pytest.fixture
     def temp_db(self):
+        """
+        Provide a filesystem path to a temporary JSON file and remove the file after the caller finishes.
+        
+        Returns:
+            str: Path to the temporary JSON file created for the test.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             temp_path = f.name
         yield temp_path
@@ -196,6 +235,15 @@ class TestInfiniteAdaptiveMemorySystem:
     
     @pytest.fixture
     def memory_system(self, temp_db):
+        """
+        Create an InfiniteAdaptiveMemorySystem configured for unit tests.
+        
+        Parameters:
+            temp_db (str or pathlib.Path): Filesystem path used as the LongTermKnowledgeBase storage location for the test.
+        
+        Returns:
+            InfiniteAdaptiveMemorySystem: Instance with d_model=128, ustm_capacity=10, awm_capacity=10, and the LTKB persisted at `temp_db`.
+        """
         return InfiniteAdaptiveMemorySystem(
             d_model=128,
             ustm_capacity=10,
@@ -239,6 +287,12 @@ class TestTruthComparator:
     
     @pytest.fixture
     def truth_comparator(self):
+        """
+        Create and return a new TruthComparator instance for use in tests.
+        
+        Returns:
+            A new TruthComparator instance.
+        """
         return TruthComparator()
     
     def test_initialization(self, truth_comparator):
@@ -247,7 +301,11 @@ class TestTruthComparator:
         assert truth_comparator.fact_database == {}
     
     def test_add_source_reliability(self, truth_comparator):
-        """Test adding source reliability"""
+        """
+        Verifies that registering a source reliability stores the source and its score in the TruthComparator's reliable_sources mapping.
+        
+        Calls add_source_reliability with a source and score, then asserts the source key exists in `reliable_sources` and its value equals the provided score.
+        """
         truth_comparator.add_source_reliability('example.com', 0.8)
         
         assert 'example.com' in truth_comparator.reliable_sources
@@ -285,6 +343,12 @@ class TestContentFilter:
     
     @pytest.fixture
     def content_filter(self):
+        """
+        Create a new ContentFilter instance for use in tests.
+        
+        Returns:
+            ContentFilter: A fresh ContentFilter instance ready to analyze content.
+        """
         return ContentFilter()
     
     def test_initialization(self, content_filter):
@@ -330,6 +394,12 @@ class TestObfuscator:
     
     @pytest.fixture
     def obfuscator(self):
+        """
+        Create a fresh Obfuscator instance for use in tests.
+        
+        Returns:
+            Obfuscator: A new Obfuscator initialized with default settings.
+        """
         return Obfuscator()
     
     def test_initialization(self, obfuscator):
