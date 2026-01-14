@@ -85,7 +85,7 @@ class SugarcottedProcessor:
             r'\b(disgusting|gross)\b': 'acquired taste',
             r'\b(boring|dull)\b': 'calm and peaceful',
             r'\b(hate|dislike)\b': 'prefer different things',
-            r'\b(never|not)\b': 'not yet',
+            r'\b(never)\b': 'not yet',
             r'\b(impossible)\b': 'might take some time',
             r'\b(stuck|trapped)\b': 'taking a little break',
             r'\b(worst|terrible|awful)\b': 'could be better',

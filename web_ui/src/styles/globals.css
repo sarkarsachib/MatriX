@@ -181,10 +181,7 @@ input:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  ring: 2px;
-  ring-color: var(--primary-purple);
-  ring-offset: 2px;
-  ring-offset-color: transparent;
+  box-shadow: 0 0 0 2px var(--primary-purple);
 }
 
 /* Loading states */

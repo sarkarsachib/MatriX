@@ -28,14 +28,14 @@ EXPOSE 8000
 # Stage 2: Node.js frontend
 FROM node:18-alpine as frontend
 
-WORKDIR /app
+WORKDIR /app/web_ui
 
 # Copy package files
 COPY web_ui/package*.json ./
 COPY web_ui/package-lock.json* ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install all dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy source code
 COPY web_ui/ .
@@ -61,7 +61,7 @@ RUN pip install --no-cache-dir -r requirements_direction_mode.txt
 COPY --from=backend /app /app
 
 # Copy built frontend
-COPY --from=frontend /app/dist /app/web_ui/dist
+COPY --from=frontend /app/web_ui/dist /app/web_ui/dist
 
 # Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser appuser
