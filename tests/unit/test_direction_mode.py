@@ -27,6 +27,12 @@ class TestQueryAnalyzer:
     
     @pytest.fixture
     def query_analyzer(self):
+        """
+        Provide a fresh QueryAnalyzer instance for tests.
+        
+        Returns:
+            QueryAnalyzer: A newly constructed QueryAnalyzer instance.
+        """
         return QueryAnalyzer()
     
     def test_initialization(self, query_analyzer):
@@ -64,7 +70,11 @@ class TestQueryAnalyzer:
             assert found
     
     def test_identify_query_type(self, query_analyzer):
-        """Test query type identification"""
+        """
+        Verify that QueryAnalyzer correctly categorizes common query shapes.
+        
+        Asserts that a direct question is labeled as 'question' or 'definition', a comparison is labeled as 'comparison' or 'versus', and an instructional query is labeled as 'how-to' or 'instruction'.
+        """
         # Question type
         q1 = query_analyzer.analyze("What is Python?")
         assert q1['query_type'] in ['question', 'definition']
@@ -83,6 +93,12 @@ class TestSearchEngine:
     
     @pytest.fixture
     def search_engine(self):
+        """
+        Provide a fresh SearchEngine instance for tests.
+        
+        Returns:
+            SearchEngine: a new SearchEngine instance.
+        """
         return SearchEngine()
     
     def test_initialization(self, search_engine):
@@ -138,6 +154,12 @@ class TestAnswerGenerator:
     
     @pytest.fixture
     def answer_generator(self):
+        """
+        Provide a fresh AnswerGenerator instance for tests.
+        
+        Returns:
+            AnswerGenerator: A new AnswerGenerator instance.
+        """
         return AnswerGenerator()
     
     def test_initialization(self, answer_generator):
@@ -169,7 +191,11 @@ class TestAnswerGenerator:
         assert len(answer['citations']) >= 1
     
     def test_generate_comprehensive_format(self, answer_generator):
-        """Test generating comprehensive format"""
+        """
+        Verify that generating an answer with format_type 'comprehensive' includes contextual content beyond the raw source.
+        
+        Asserts that the returned mapping contains an 'answer' key and that the generated answer text is longer than the provided source content, indicating inclusion of additional context.
+        """
         sources = [{'content': 'Test content', 'source': 'source.com'}]
         answer = answer_generator.generate(
             "Question",
@@ -211,6 +237,12 @@ class TestFactChecker:
     
     @pytest.fixture
     def fact_checker(self):
+        """
+        Provide a new FactChecker instance for tests.
+        
+        Returns:
+            FactChecker: A fresh FactChecker instance.
+        """
         return FactChecker()
     
     def test_initialization(self, fact_checker):
@@ -243,7 +275,11 @@ class TestFactChecker:
             assert 'confidence' in result
     
     def test_consensus_detection(self, fact_checker):
-        """Test consensus detection"""
+        """
+        Verifies that FactChecker marks a widely accepted statement with high confidence and includes consensus metadata.
+        
+        Asserts that a common factual statement (e.g., "Python is a programming language") yields a confidence greater than 0.8 and that the result contains a 'consensus' key.
+        """
         fact = "Python is a programming language"
         result = fact_checker.check(fact)
         
@@ -268,6 +304,16 @@ class TestDirectionModeController:
     
     @pytest.fixture
     def controller_config(self):
+        """
+        Provide a test configuration dictionary for DirectionModeController containing API keys and a knowledge database path.
+        
+        Returns:
+            config (dict): Configuration mapping with keys:
+                - `google_api_key` (str): Test Google API key.
+                - `google_cse_id` (str): Test Google Custom Search Engine ID.
+                - `news_api_key` (str): Test News API key.
+                - `knowledge_db_path` (str): Filesystem path to the test knowledge database.
+        """
         return {
             'google_api_key': 'test_key',
             'google_cse_id': 'test_cse_id',
@@ -277,6 +323,15 @@ class TestDirectionModeController:
     
     @pytest.fixture
     def controller(self, controller_config):
+        """
+        Create a DirectionModeController configured with the provided settings.
+        
+        Parameters:
+            controller_config (dict): Configuration values (e.g., API keys, knowledge DB path, and other options) used to initialize the controller.
+        
+        Returns:
+            DirectionModeController: A new controller instance configured according to controller_config.
+        """
         return DirectionModeController(controller_config)
     
     def test_initialization(self, controller, controller_config):
@@ -377,6 +432,12 @@ class TestSubmodeStyles:
     
     @pytest.fixture
     def response_styler(self):
+        """
+        Provide a fresh ResponseStyler instance for use in tests.
+        
+        Returns:
+            ResponseStyler: A new ResponseStyler instance.
+        """
         return ResponseStyler()
     
     def test_initialization(self, response_styler):
@@ -452,6 +513,15 @@ class TestDirectionModePerformance:
     
     @pytest.fixture
     def controller_config(self):
+        """
+        Provide a configuration dictionary for DirectionModeController unit tests.
+        
+        Returns:
+            config (dict): Test configuration containing:
+                - 'google_api_key' (str): placeholder API key for Google services.
+                - 'google_cse_id' (str): placeholder Google Custom Search Engine ID.
+                - 'knowledge_db_path' (str): filesystem path to the test knowledge database.
+        """
         return {
             'google_api_key': 'test_key',
             'google_cse_id': 'test_cse_id',
@@ -460,6 +530,15 @@ class TestDirectionModePerformance:
     
     @pytest.fixture
     def controller(self, controller_config):
+        """
+        Create a DirectionModeController configured with the provided settings.
+        
+        Parameters:
+            controller_config (dict): Configuration values (e.g., API keys, knowledge DB path, and other options) used to initialize the controller.
+        
+        Returns:
+            DirectionModeController: A new controller instance configured according to controller_config.
+        """
         return DirectionModeController(controller_config)
     
     @pytest.mark.asyncio

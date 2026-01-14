@@ -27,14 +27,38 @@ class TestQuantumSuperpositionLayer:
     
     @pytest.fixture
     def d_model(self):
+        """
+        Model hidden dimension used by this component.
+        
+        Returns:
+            d_model (int): The model dimensionality (128).
+        """
         return 128
     
     @pytest.fixture
     def superposition_layer(self, d_model):
+        """
+        Create a QuantumSuperpositionLayer configured for the given model dimension.
+        
+        Parameters:
+            d_model (int): The hidden feature dimension (model width) for which the layer is configured.
+        
+        Returns:
+            QuantumSuperpositionLayer: An instance of QuantumSuperpositionLayer initialized with d_model.
+        """
         return QuantumSuperpositionLayer(d_model)
     
     @pytest.fixture
     def input_tensor(self, d_model):
+        """
+        Create a random input tensor for tests with shape (2, 10, d_model).
+        
+        Parameters:
+            d_model (int): Embedding dimension size.
+        
+        Returns:
+            torch.Tensor: A tensor of shape (2, 10, d_model) with values sampled from a standard normal distribution.
+        """
         return torch.randn(2, 10, d_model)
     
     def test_initialization(self, superposition_layer, d_model):
@@ -70,14 +94,38 @@ class TestQuantumEntanglementLayer:
     
     @pytest.fixture
     def d_model(self):
+        """
+        Model hidden dimension used by this component.
+        
+        Returns:
+            d_model (int): The model dimensionality (128).
+        """
         return 128
     
     @pytest.fixture
     def entanglement_layer(self, d_model):
+        """
+        Create a QuantumEntanglementLayer configured for the given model dimensionality with four entangled pairs by default.
+        
+        Parameters:
+            d_model (int): Embedding dimensionality for the entanglement layer.
+        
+        Returns:
+            QuantumEntanglementLayer: Instance configured with `d_model` and `num_entangled_pairs=4`.
+        """
         return QuantumEntanglementLayer(d_model, num_entangled_pairs=4)
     
     @pytest.fixture
     def input_tensor(self, d_model):
+        """
+        Create a random input tensor for tests with shape (2, 10, d_model).
+        
+        Parameters:
+            d_model (int): Embedding dimension size.
+        
+        Returns:
+            torch.Tensor: A tensor of shape (2, 10, d_model) with values sampled from a standard normal distribution.
+        """
         return torch.randn(2, 10, d_model)
     
     def test_initialization(self, entanglement_layer, d_model):
@@ -110,14 +158,38 @@ class TestQuantumTunnelingLayer:
     
     @pytest.fixture
     def d_model(self):
+        """
+        Model hidden dimension used by this component.
+        
+        Returns:
+            d_model (int): The model dimensionality (128).
+        """
         return 128
     
     @pytest.fixture
     def tunneling_layer(self, d_model):
+        """
+        Create a QuantumTunnelingLayer configured for the given model dimension.
+        
+        Parameters:
+            d_model (int): Hidden dimensionality used to size the tunneling layer.
+        
+        Returns:
+            QuantumTunnelingLayer: An instance of QuantumTunnelingLayer configured with `d_model`.
+        """
         return QuantumTunnelingLayer(d_model)
     
     @pytest.fixture
     def input_tensor(self, d_model):
+        """
+        Create a random input tensor for tests with shape (2, 10, d_model).
+        
+        Parameters:
+            d_model (int): Embedding dimension size.
+        
+        Returns:
+            torch.Tensor: A tensor of shape (2, 10, d_model) with values sampled from a standard normal distribution.
+        """
         return torch.randn(2, 10, d_model)
     
     def test_initialization(self, tunneling_layer, d_model):
@@ -141,14 +213,38 @@ class TestQuantumInterferenceLayer:
     
     @pytest.fixture
     def d_model(self):
+        """
+        Model hidden dimension used by this component.
+        
+        Returns:
+            d_model (int): The model dimensionality (128).
+        """
         return 128
     
     @pytest.fixture
     def interference_layer(self, d_model):
+        """
+        Create a QuantumInterferenceLayer configured for the specified model dimensionality.
+        
+        Parameters:
+            d_model (int): Dimensionality of the model (hidden size) used to initialize the layer.
+        
+        Returns:
+            QuantumInterferenceLayer: An instance of QuantumInterferenceLayer initialized with `d_model`.
+        """
         return QuantumInterferenceLayer(d_model)
     
     @pytest.fixture
     def input_tensor(self, d_model):
+        """
+        Create a random input tensor for tests with shape (2, 10, d_model).
+        
+        Parameters:
+            d_model (int): Embedding dimension size.
+        
+        Returns:
+            torch.Tensor: A tensor of shape (2, 10, d_model) with values sampled from a standard normal distribution.
+        """
         return torch.randn(2, 10, d_model)
     
     def test_initialization(self, interference_layer, d_model):
@@ -171,6 +267,19 @@ class TestQuantumInspiredNeuralCore:
     
     @pytest.fixture
     def config(self):
+        """
+        Default configuration for the QuantumInspiredNeuralCore.
+        
+        Returns:
+            dict: Configuration mapping with keys:
+                - 'vocab_size' (int): Vocabulary size.
+                - 'd_model' (int): Model hidden dimension.
+                - 'num_heads' (int): Number of attention heads.
+                - 'num_layers' (int): Number of transformer layers.
+                - 'num_experts' (int): Number of experts for routing.
+                - 'top_k' (int): Top-k experts selected per token.
+                - 'max_position_embeddings' (int): Maximum sequence length.
+        """
         return {
             'vocab_size': 1000,
             'd_model': 128,
@@ -183,10 +292,27 @@ class TestQuantumInspiredNeuralCore:
     
     @pytest.fixture
     def neural_core(self, config):
+        """
+        Create a QuantumInspiredNeuralCore instance from a configuration dictionary.
+        
+        Parameters:
+            config (dict): Configuration for the neural core. Expected keys include
+                `vocab_size`, `d_model`, `num_heads`, `num_layers`, `num_experts`,
+                `top_k`, and `max_position_embeddings`.
+        
+        Returns:
+            QuantumInspiredNeuralCore: An instantiated neural core configured using `config`.
+        """
         return QuantumInspiredNeuralCore(**config)
     
     @pytest.fixture
     def input_ids(self):
+        """
+        Create a random batch of input token IDs for tests.
+        
+        Returns:
+            input_ids (torch.LongTensor): Tensor of shape (2, 10) with random integers in the range 0 (inclusive) to 1000 (exclusive).
+        """
         return torch.randint(0, 1000, (2, 10))
     
     def test_initialization(self, neural_core, config):
@@ -204,7 +330,11 @@ class TestQuantumInspiredNeuralCore:
         assert not torch.isnan(output['output']).any()
     
     def test_generation(self, neural_core, input_ids):
-        """Test text generation works"""
+        """
+        Verifies that the model's generation produces sequences with the expected batch size and sequence length.
+        
+        Calls `neural_core.generate` with a max length of 20, temperature 0.8, and top_k 10, then asserts the generated tensor's first dimension matches `input_ids` batch size and its sequence length is 20.
+        """
         generated = neural_core.generate(
             input_ids,
             max_length=20,
@@ -267,6 +397,19 @@ class TestNeuralCorePerformance:
     
     @pytest.fixture
     def config(self):
+        """
+        Provide the default configuration parameters for the neural core.
+        
+        Returns:
+            dict: Mapping of configuration keys to their default values:
+                - `vocab_size` (int): Vocabulary size (10000).
+                - `d_model` (int): Model hidden dimension (256).
+                - `num_heads` (int): Number of attention heads (8).
+                - `num_layers` (int): Number of transformer layers (4).
+                - `num_experts` (int): Number of experts for mixture-of-experts routing (8).
+                - `top_k` (int): Top-k experts selected per token (4).
+                - `max_position_embeddings` (int): Maximum supported sequence length (1024).
+        """
         return {
             'vocab_size': 10000,
             'd_model': 256,
@@ -279,6 +422,17 @@ class TestNeuralCorePerformance:
     
     @pytest.fixture
     def neural_core(self, config):
+        """
+        Create a QuantumInspiredNeuralCore instance from a configuration dictionary.
+        
+        Parameters:
+            config (dict): Configuration for the neural core. Expected keys include
+                `vocab_size`, `d_model`, `num_heads`, `num_layers`, `num_experts`,
+                `top_k`, and `max_position_embeddings`.
+        
+        Returns:
+            QuantumInspiredNeuralCore: An instantiated neural core configured using `config`.
+        """
         return QuantumInspiredNeuralCore(**config)
     
     def test_forward_pass_speed(self, neural_core, benchmark):
@@ -291,7 +445,11 @@ class TestNeuralCorePerformance:
                 assert output is not None
     
     def test_generation_speed(self, neural_core, benchmark):
-        """Benchmark generation speed"""
+        """
+        Measure generation throughput of the neural core using the benchmark fixture.
+        
+        Runs a generation call with a short prompt and asserts the generated sequence length matches the requested `max_length` (100), allowing the benchmark harness to time the operation.
+        """
         input_ids = torch.randint(0, 10000, (1, 10))
         
         with benchmark("Neural Core Generation"):
@@ -303,7 +461,14 @@ class TestNeuralCorePerformance:
             assert generated.shape[1] == 100
     
     def test_memory_usage(self, neural_core):
-        """Test memory usage under load"""
+        """
+        Measure peak memory during a forward pass of the provided neural_core and assert peak usage is less than 1024 MB.
+        
+        Runs a single forward pass using random input_ids of shape (8, 512), records peak memory with tracemalloc, and fails the test if peak memory in megabytes is 1024 or greater.
+        
+        Parameters:
+            neural_core: The model instance to test (callable that accepts input_ids).
+        """
         import tracemalloc
         tracemalloc.start()
         

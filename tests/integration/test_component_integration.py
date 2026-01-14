@@ -22,6 +22,15 @@ class TestNeuralCoreIntegration:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and yield its file path.
+        
+        The file contains default model, memory, safety, and generation settings used by integration tests.
+        The fixture yields the path to the temporary JSON file and removes the file after the test completes.
+        
+        Returns:
+            str: Path to the temporary JSON config file.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             import json
             config = {
@@ -56,6 +65,15 @@ class TestNeuralCoreIntegration:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured using the provided temporary config file.
+        
+        Parameters:
+            temp_config (str): Path to a temporary JSON configuration file containing model and system settings.
+        
+        Returns:
+            SathikAI: A SathikAI instance initialized with the config at `temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_neural_core_initialization(self, sathik_ai):
@@ -102,6 +120,11 @@ class TestMemorySystemIntegration:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and yield its filepath.
+        
+        The file contains a minimal SathikAI configuration (model hyperparameters, capacities, output and safety flags, and debug mode). The fixture yields the full filesystem path to the temporary JSON file as a string; the file is removed after the fixture finishes.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             import json
             config = {
@@ -127,6 +150,15 @@ class TestMemorySystemIntegration:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured using the provided temporary config file.
+        
+        Parameters:
+            temp_config (str): Path to a temporary JSON configuration file containing model and system settings.
+        
+        Returns:
+            SathikAI: A SathikAI instance initialized with the config at `temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_ustm_integration(self, sathik_ai):
@@ -182,6 +214,14 @@ class TestSafetyModulesIntegration:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for integration tests and yield its filesystem path.
+        
+        The file contains a minimal SathikAI configuration (model hyperparameters, memory capacities, safety toggles, generation settings, and debug flag). The temporary file is removed after the caller finishes using the yielded path.
+        
+        Returns:
+            str: Path to the temporary JSON config file.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             import json
             config = {
@@ -208,6 +248,15 @@ class TestSafetyModulesIntegration:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured using the provided temporary config file.
+        
+        Parameters:
+            temp_config (str): Path to a temporary JSON configuration file containing model and system settings.
+        
+        Returns:
+            SathikAI: A SathikAI instance initialized with the config at `temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_content_filter_integration(self, sathik_ai):
@@ -250,6 +299,11 @@ class TestOutputEngineIntegration:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and yield its filepath.
+        
+        The file contains a minimal SathikAI configuration (model hyperparameters, capacities, output and safety flags, and debug mode). The fixture yields the full filesystem path to the temporary JSON file as a string; the file is removed after the fixture finishes.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             import json
             config = {
@@ -275,6 +329,15 @@ class TestOutputEngineIntegration:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured using the provided temporary config file.
+        
+        Parameters:
+            temp_config (str): Path to a temporary JSON configuration file containing model and system settings.
+        
+        Returns:
+            SathikAI: A SathikAI instance initialized with the config at `temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_text_mode_integration(self, sathik_ai):
@@ -333,6 +396,14 @@ class TestDirectionModeIntegration:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file with default test settings and yield its path; the file is removed after use.
+        
+        The configuration contains default model hyperparameters, memory capacities, API keys (placeholder values), and debug flags suitable for integration tests.
+        
+        Returns:
+            str: Path to the temporary JSON config file.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             import json
             config = {
@@ -359,6 +430,15 @@ class TestDirectionModeIntegration:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured using the provided temporary config file.
+        
+        Parameters:
+            temp_config (str): Path to a temporary JSON configuration file containing model and system settings.
+        
+        Returns:
+            SathikAI: A SathikAI instance initialized with the config at `temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     @pytest.mark.asyncio
@@ -398,6 +478,11 @@ class TestFullPipeline:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and yield its filepath.
+        
+        The file contains a minimal SathikAI configuration (model hyperparameters, capacities, output and safety flags, and debug mode). The fixture yields the full filesystem path to the temporary JSON file as a string; the file is removed after the fixture finishes.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             import json
             config = {
@@ -423,6 +508,15 @@ class TestFullPipeline:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured using the provided temporary config file.
+        
+        Parameters:
+            temp_config (str): Path to a temporary JSON configuration file containing model and system settings.
+        
+        Returns:
+            SathikAI: A SathikAI instance initialized with the config at `temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_complete_trained_mode_pipeline(self, sathik_ai):
@@ -511,6 +605,11 @@ class TestComponentCommunication:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and yield its filepath.
+        
+        The file contains a minimal SathikAI configuration (model hyperparameters, capacities, output and safety flags, and debug mode). The fixture yields the full filesystem path to the temporary JSON file as a string; the file is removed after the fixture finishes.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             import json
             config = {
@@ -536,6 +635,15 @@ class TestComponentCommunication:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured using the provided temporary config file.
+        
+        Parameters:
+            temp_config (str): Path to a temporary JSON configuration file containing model and system settings.
+        
+        Returns:
+            SathikAI: A SathikAI instance initialized with the config at `temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_neural_core_to_memory(self, sathik_ai):

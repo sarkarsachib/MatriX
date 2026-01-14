@@ -25,6 +25,12 @@ class TestTextMode:
     
     @pytest.fixture
     def text_mode(self):
+        """
+        Create a new TextMode instance.
+        
+        Returns:
+            TextMode: A new TextMode object used for generating text outputs.
+        """
         return TextMode()
     
     def test_initialization(self, text_mode):
@@ -78,6 +84,12 @@ class TestCodeMode:
     
     @pytest.fixture
     def code_mode(self):
+        """
+        Provide a new CodeMode instance for use in tests.
+        
+        Returns:
+            CodeMode: A new CodeMode instance.
+        """
         return CodeMode()
     
     def test_initialization(self, code_mode):
@@ -104,7 +116,11 @@ class TestCodeMode:
         assert 'return a + b' in output
     
     def test_python_class_generation(self, code_mode):
-        """Test generating Python class"""
+        """
+        Verify CodeMode generates a Python class definition that includes the provided class name and docstring.
+        
+        Asserts that the produced output contains the `class <Name>:` declaration and the supplied docstring.
+        """
         input_data = {
             'language': 'python',
             'code_type': 'class',
@@ -174,6 +190,12 @@ class TestAudioMode:
     
     @pytest.fixture
     def audio_mode(self):
+        """
+        Provide a fresh AudioMode instance for use in tests.
+        
+        Returns:
+            AudioMode: A new AudioMode instance.
+        """
         return AudioMode()
     
     def test_initialization(self, audio_mode):
@@ -222,6 +244,12 @@ class TestCommandMode:
     
     @pytest.fixture
     def command_mode(self):
+        """
+        Create a new CommandMode instance.
+        
+        Returns:
+            CommandMode: A newly constructed CommandMode object.
+        """
         return CommandMode()
     
     def test_initialization(self, command_mode):
@@ -256,6 +284,12 @@ class TestOutputEngine:
     
     @pytest.fixture
     def output_engine(self):
+        """
+        Create a new OutputEngine instance.
+        
+        Returns:
+            output_engine (OutputEngine): A new OutputEngine instance.
+        """
         return OutputEngine()
     
     def test_initialization(self, output_engine):
@@ -327,6 +361,12 @@ class TestOutputModePerformance:
     
     @pytest.fixture
     def output_engine(self):
+        """
+        Create a new OutputEngine instance.
+        
+        Returns:
+            output_engine (OutputEngine): A new OutputEngine instance.
+        """
         return OutputEngine()
     
     def test_text_generation_throughput(self, output_engine, benchmark):

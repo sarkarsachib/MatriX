@@ -18,6 +18,13 @@ class ResponseAccuracyBenchmark:
     """Test response accuracy and relevance"""
     
     def __init__(self):
+        """
+        Initialize the benchmark with predefined test queries categorized by type.
+        
+        Creates `self.test_queries`, a dictionary mapping category names to lists of (question, expected_answer) tuples. Categories provided:
+        - 'factual': short fact-based question/answer pairs (e.g., capitals, arithmetic, authorship, boiling point).
+        - 'explanatory': conceptual prompts paired with expected concise explanations.
+        """
         self.test_queries = {
             'factual': [
                 ("What is the capital of France?", "Paris"),
@@ -33,7 +40,19 @@ class ResponseAccuracyBenchmark:
         }
     
     def benchmark_response_accuracy(self, responses: List[str]) -> Dict[str, Any]:
-        """Test if responses are accurate"""
+        """
+        Evaluate factual response accuracy against the benchmark's predefined factual test queries.
+        
+        Parameters:
+            responses (List[str]): Candidate response texts to be checked for containing expected factual answers.
+        
+        Returns:
+            Dict[str, Any]: A dictionary with:
+                - total_queries: Number of responses evaluated.
+                - correct_responses: Count of responses that contained the expected factual answers (case-insensitive substring match).
+                - accuracy_percent: Percentage of correct responses (0-100).
+                - accuracy_score: Normalized accuracy (0.0-1.0).
+        """
         correct = 0
         total = len(responses)
         
@@ -62,6 +81,14 @@ class ConfidenceCalibrationBenchmark:
     """Test confidence score calibration"""
     
     def __init__(self):
+        """
+        Initialize the ConfidenceCalibrationBenchmark with predefined calibration test cases.
+        
+        Each test case is a dict containing:
+        - `query`: a short description of the test scenario.
+        - `true_answer`: whether the expected model answer is correct in that scenario.
+        - `expected_confidence`: the target confidence level (0.0 to 1.0) the model should exhibit for the query.
+        """
         self.confidence_tests = [
             {'query': 'High confidence question', 'true_answer': True, 'expected_confidence': 0.9},
             {'query': 'Medium confidence question', 'true_answer': True, 'expected_confidence': 0.7},
@@ -70,7 +97,19 @@ class ConfidenceCalibrationBenchmark:
         ]
     
     def benchmark_confidence_calibration(self, predictions: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Test if confidence scores are properly calibrated"""
+        """
+        Evaluate whether provided prediction confidence scores align with expected calibration thresholds.
+        
+        Parameters:
+            predictions (List[Dict[str, Any]]): Sequence of prediction objects; each prediction is expected to include a numeric 'confidence' value. Predictions are matched by index against the instance's predefined `confidence_tests`.
+        
+        Returns:
+            Dict[str, Any]: Summary of the calibration check containing:
+                - total_predictions (int): Number of predictions evaluated.
+                - calibration_errors (int): Count of predictions whose confidence deviated beyond the tolerated threshold relative to the test expectation.
+                - calibration_score (float): Fraction of well-calibrated predictions (0.0 to 1.0).
+                - well_calibrated_percent (float): calibration_score expressed as a percentage.
+        """
         calibration_errors = 0
         total = len(predictions)
         
@@ -105,6 +144,14 @@ class CitationQualityBenchmark:
     """Test citation quality and accuracy"""
     
     def __init__(self):
+        """
+        Initialize predefined citation quality test cases.
+        
+        Sets self.citation_tests to a list of dictionaries, each representing a test case with:
+        - 'query' (str): the query string for the test.
+        - 'required_citations' (int): minimum number of citations required to consider the test adequate.
+        - 'citations' (List[Dict[str, str]]): list of citation entries where each entry contains 'source', 'url', and 'content'.
+        """
         self.citation_tests = [
             {
                 'query': 'Test query',
@@ -124,7 +171,19 @@ class CitationQualityBenchmark:
         ]
     
     def benchmark_citation_quality(self, results: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Test citation quality"""
+        """
+        Evaluate whether each result contains at least the required number of citations for the corresponding citation test.
+        
+        Parameters:
+            results (List[Dict[str, Any]]): List of result objects produced by the system under test. Each result may include a 'citations' key with a list of citation entries. Results are matched to predefined tests by list index; missing results are treated as failures.
+        
+        Returns:
+            Dict[str, Any]: Summary of citation quality with the following keys:
+                - total_tests: Number of tests evaluated (int).
+                - adequate_citations: Count of tests where the provided citations met or exceeded the required number (int).
+                - citation_quality_percent: Percentage of tests with adequate citations (0-100 float).
+                - citation_quality_score: Same value as `citation_quality_percent` expressed as a 0.0-1.0 score (float).
+        """
         correct = 0
         total = len(results)
         
@@ -153,6 +212,11 @@ class KnowledgeBaseHitRateBenchmark:
     """Test knowledge base hit rates"""
     
     def __init__(self):
+        """
+        Initialize the benchmark with an in-memory knowledge base mapping topic names to short definitions.
+        
+        The knowledge_base attribute is populated with sample entries for 'AI', 'Machine Learning', 'Neural Networks', and 'Deep Learning' to support hit-rate testing.
+        """
         self.knowledge_base = {
             'AI': 'Artificial Intelligence is intelligence demonstrated by machines',
             'Machine Learning': 'Machine Learning is a subset of AI',
@@ -161,7 +225,16 @@ class KnowledgeBaseHitRateBenchmark:
         }
     
     def benchmark_knowledge_hit_rate(self, queries: List[str]) -> Dict[str, Any]:
-        """Test how often knowledge base is hit"""
+        """
+        Compute how many queries match entries in the internal knowledge base.
+        
+        Returns:
+            result (Dict[str, Any]): Dictionary containing:
+                - total_queries (int): Number of input queries evaluated.
+                - knowledge_hits (int): Number of queries that contained both a topic and its definition.
+                - hit_rate_percent (float): Percentage of queries that were hits (0–100).
+                - hit_rate_score (float): Hit rate as a normalized score (0.0–1.0).
+        """
         hits = 0
         total = len(queries)
         
@@ -182,7 +255,19 @@ class KnowledgeBaseHitRateBenchmark:
 
 
 def run_quality_benchmarks():
-    """Run all quality benchmarks"""
+    """
+    Execute all defined quality benchmarks and return an aggregated summary.
+    
+    Runs the response accuracy, confidence calibration, citation quality, and knowledge-base hit-rate benchmarks and collects their individual results.
+    
+    Returns:
+        summary (dict): Aggregated results with keys:
+            - 'timestamp': float POSIX timestamp when the run completed.
+            - 'response_accuracy': dict result from ResponseAccuracyBenchmark.
+            - 'confidence_calibration': dict result from ConfidenceCalibrationBenchmark.
+            - 'citation_quality': dict result from CitationQualityBenchmark.
+            - 'knowledge_hit_rate': dict result from KnowledgeBaseHitRateBenchmark.
+    """
     print("\n" + "="*80)
     print("Running Quality Benchmarks")
     print("="*80)

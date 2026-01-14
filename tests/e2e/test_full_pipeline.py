@@ -23,6 +23,14 @@ class TestTrainedModeWorkflow:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and yield its filesystem path.
+        
+        Writes a configuration containing model hyperparameters, training settings, memory capacities, safety flags, generation options, and debug mode to a temporary file, yields the file path for use in tests, and removes the file after the fixture completes.
+        
+        Returns:
+            str: Filesystem path to the temporary JSON config file.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             config = {
                 'vocab_size': 1000,
@@ -56,6 +64,15 @@ class TestTrainedModeWorkflow:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured with the provided temporary config file path.
+        
+        Parameters:
+            temp_config (str | Path): Filesystem path to a temporary JSON configuration file.
+        
+        Returns:
+            SathikAI: An instance of SathikAI initialized with `config_path=temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_single_query_workflow(self, sathik_ai):
@@ -78,7 +95,11 @@ class TestTrainedModeWorkflow:
         assert result['response'] is not None
     
     def test_multiple_queries_workflow(self, sathik_ai):
-        """Test multiple queries in sequence"""
+        """
+        Validate that multiple trained-mode queries produce successful responses and are stored in short-term memory.
+        
+        Executes the first three SAMPLE_QUERIES as a single user using trained mode (submode "normal"), comprehensive format, and text output; asserts each result has status 'success' and contains a 'response'. Confirms the short-term memory (USTM) has at least three entries after the queries.
+        """
         user_id = "test_user"
         
         for i, query in enumerate(SAMPLE_QUERIES[:3]):
@@ -98,7 +119,11 @@ class TestTrainedModeWorkflow:
         assert len(sathik_ai.memory_system.ustm.memory) >= 3
     
     def test_memory_learning_workflow(self, sathik_ai):
-        """Test memory learns from user interactions"""
+        """
+        Verifies the system updates a user's long-term memory after related interactions.
+        
+        Issues two related trained-mode queries for the same user and asserts that the long-term knowledge base contains a user profile keyed by `user_profile_<user_id>` with an `interaction_count` of at least 2.
+        """
         user_id = "learning_user"
         
         # First query about topic A
@@ -175,6 +200,14 @@ class TestDirectionModeWorkflow:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and provide its filesystem path.
+        
+        The fixture writes a small default config suitable for E2E tests to a temporary .json file, yields the file path for use by the test, and ensures the file is removed after the fixture completes.
+        
+        Returns:
+            str: Filesystem path to the temporary JSON config file; the file is deleted when the fixture finalizes.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             config = {
                 'vocab_size': 1000,
@@ -200,6 +233,15 @@ class TestDirectionModeWorkflow:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured with the provided temporary config file path.
+        
+        Parameters:
+            temp_config (str | Path): Filesystem path to a temporary JSON configuration file.
+        
+        Returns:
+            SathikAI: An instance of SathikAI initialized with `config_path=temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     @pytest.mark.asyncio
@@ -259,6 +301,14 @@ class TestModeSwitching:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and provide its filesystem path.
+        
+        The fixture writes a small default config suitable for E2E tests to a temporary .json file, yields the file path for use by the test, and ensures the file is removed after the fixture completes.
+        
+        Returns:
+            str: Filesystem path to the temporary JSON config file; the file is deleted when the fixture finalizes.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             config = {
                 'vocab_size': 1000,
@@ -284,6 +334,15 @@ class TestModeSwitching:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured with the provided temporary config file path.
+        
+        Parameters:
+            temp_config (str | Path): Filesystem path to a temporary JSON configuration file.
+        
+        Returns:
+            SathikAI: An instance of SathikAI initialized with `config_path=temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     @pytest.mark.asyncio
@@ -336,7 +395,11 @@ class TestModeSwitching:
     
     @pytest.mark.asyncio
     async def test_submode_switching(self, sathik_ai):
-        """Test switching between submodes"""
+        """
+        Verify that switching between trained 'normal' and various direction submodes succeeds.
+        
+        Executes the same query across submodes ['normal', 'sugarcotted', 'unhinged', 'reaper', '666'], calling trained mode for 'normal' and direction mode for the others, and asserts each returned result has a status of 'success'.
+        """
         query = "Tell me about AI"
         submodes = ['normal', 'sugarcotted', 'unhinged', 'reaper', '666']
         
@@ -368,6 +431,14 @@ class TestMemoryConsolidation:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file with default model, memory, and debug settings and yield its filesystem path for use in tests.
+        
+        The configuration includes model hyperparameters (vocab_size, d_model, num_heads, num_layers, num_experts, top_k, max_position_embeddings), memory capacities (ustm_capacity, awm_capacity), a placeholder ltkb_path, and flags for content filtering, truth comparator, and debug mode. The temporary file is removed after the fixture completes.
+        
+        Returns:
+            str: Path to the temporary JSON config file on disk. The file is deleted when the fixture scope ends.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             config = {
                 'vocab_size': 1000,
@@ -390,10 +461,23 @@ class TestMemoryConsolidation:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured with the provided temporary config file path.
+        
+        Parameters:
+            temp_config (str | Path): Filesystem path to a temporary JSON configuration file.
+        
+        Returns:
+            SathikAI: An instance of SathikAI initialized with `config_path=temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_ustm_to_awm_transfer(self, sathik_ai):
-        """Test USTM transfers to AWM"""
+        """
+        Verify that short-term memory (USTM) overflow is transferred into active working memory (AWM).
+        
+        Populates the USTM with multiple queries to exceed its configured capacity, then asserts that the USTM length remains within its capacity and that the AWM contains processed entries indicating transfer occurred.
+        """
         # Fill USTM beyond capacity
         for i in range(10):
             sathik_ai.process_query(
@@ -410,7 +494,11 @@ class TestMemoryConsolidation:
         assert sathik_ai.memory_system.awm is not None
     
     def test_awm_to_ltkb_consolidation(self, sathik_ai):
-        """Test AWM consolidates to LTKB"""
+        """
+        Verifies that items in active working memory (AWM) are consolidated into the long-term knowledge base (LTKB) for a given user.
+        
+        Issues multiple important trained-mode queries for a single user, invokes the memory lifecycle management, and asserts that the resulting user profile exists in LTKB with an interaction_count of at least 5.
+        """
         user_id = "consolidation_user"
         
         # Multiple queries
@@ -431,7 +519,11 @@ class TestMemoryConsolidation:
         assert user_profile['content']['interaction_count'] >= 5
     
     def test_long_term_memory_retention(self, sathik_ai):
-        """Test long-term memory retention"""
+        """
+        Verify that important user interactions are persisted in long-term memory.
+        
+        Feeds several significant statements for a single user and asserts that a corresponding user profile entry exists in the long-term knowledge base (LTKB).
+        """
         user_id = "retention_user"
         important_queries = [
             "User's name is John",
@@ -457,6 +549,14 @@ class TestErrorHandling:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and provide its filesystem path.
+        
+        Creates a temporary file containing a test configuration for model, memory, and safety settings, yields the file path to the caller, and ensures the file is removed after use.
+        
+        Returns:
+            str: Path to the temporary JSON configuration file.
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             config = {
                 'vocab_size': 1000,
@@ -482,6 +582,15 @@ class TestErrorHandling:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured with the provided temporary config file path.
+        
+        Parameters:
+            temp_config (str | Path): Filesystem path to a temporary JSON configuration file.
+        
+        Returns:
+            SathikAI: An instance of SathikAI initialized with `config_path=temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_empty_query_handling(self, sathik_ai):
@@ -544,6 +653,14 @@ class TestMultiUserWorkflows:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and yield its file path.
+        
+        The file contains a small model and memory configuration tailored for fast, deterministic testing (e.g., reduced vocab/model sizes, small USTM/AWM capacities, debug mode enabled). The temporary file path is yielded to the caller and the file is removed after use.
+        
+        Returns:
+            str: Path to the created temporary JSON config file. 
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             config = {
                 'vocab_size': 1000,
@@ -566,6 +683,15 @@ class TestMultiUserWorkflows:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured with the provided temporary config file path.
+        
+        Parameters:
+            temp_config (str | Path): Filesystem path to a temporary JSON configuration file.
+        
+        Returns:
+            SathikAI: An instance of SathikAI initialized with `config_path=temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_concurrent_user_queries(self, sathik_ai):
@@ -631,6 +757,14 @@ class TestSystemPrompts:
     
     @pytest.fixture
     def temp_config(self):
+        """
+        Create a temporary JSON configuration file for tests and yield its file path.
+        
+        The file contains a small model and memory configuration tailored for fast, deterministic testing (e.g., reduced vocab/model sizes, small USTM/AWM capacities, debug mode enabled). The temporary file path is yielded to the caller and the file is removed after use.
+        
+        Returns:
+            str: Path to the created temporary JSON config file. 
+        """
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
             config = {
                 'vocab_size': 1000,
@@ -653,6 +787,15 @@ class TestSystemPrompts:
     
     @pytest.fixture
     def sathik_ai(self, temp_config):
+        """
+        Create a SathikAI instance configured with the provided temporary config file path.
+        
+        Parameters:
+            temp_config (str | Path): Filesystem path to a temporary JSON configuration file.
+        
+        Returns:
+            SathikAI: An instance of SathikAI initialized with `config_path=temp_config`.
+        """
         return SathikAI(config_path=temp_config)
     
     def test_system_prompt_influence(self, sathik_ai):
@@ -673,7 +816,11 @@ class TestSystemPrompts:
     
     @pytest.mark.asyncio
     async def test_mode_prompt_differences(self, sathik_ai):
-        """Test that different mode prompts produce different outputs"""
+        """
+        Verify that trained normal, direction sugarcotted, and direction unhinged prompts produce successful, distinct textual outputs.
+        
+        Asserts each invocation returns a 'success' status and that the produced textual fields ('response' from trained mode and 'answer' from direction modes) are strings and differ in style or content.
+        """
         query = "Explain AI"
         
         # Normal mode
