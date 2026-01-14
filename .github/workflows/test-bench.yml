@@ -1,0 +1,131 @@
+name: MatriX Tests and Benchmarks
+
+on:
+  push:
+    branches: [ 'main', 'dev' ]
+    paths:
+      - 'tests/**'
+      - 'benchmarks/**'
+      - 'test_runner.py'
+      - 'benchmark_runner.py'
+      - 'neural_core/**'
+      - 'memory_system/**'
+      - 'output_engine/**'
+      - 'sathik_ai/**'
+  pull_request:
+    branches: [ 'main', 'dev' ]
+    paths:
+      - 'tests/**'
+      - 'benchmarks/**'
+  schedule:
+    # Run unit tests daily at 6 AM UTC
+    - cron: '0 6 * * *'
+      workflows: [run-unit-tests]
+    # Run benchmarks weekly on Sunday at 0 AM UTC
+    - cron: '0 0 * * *'
+      workflows: [run-benchmarks]
+    # Run full test suite monthly on 1st at 0 AM UTC
+    - cron: '0 0 1 * *'
+      workflows: [run-full-test-suite]
+
+jobs:
+  run-unit-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install -r test_requirements.txt
+      
+      - name: Run unit tests with coverage
+        run: |
+          python -m pytest tests/unit/ -v --cov=. --cov-report=html --cov-report=term --cov-report=json --cov-fail-under=90
+      
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+        if: success()
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  run-benchmarks:
+    name: Run Benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install -r test_requirements.txt
+      
+      - name: Run performance benchmarks
+        run: |
+          python benchmark_runner.py --performance --output benchmark_results.json
+      
+      - name: Run quality benchmarks
+        run: |
+          python benchmark_runner.py --quality --output benchmark_results.json
+      
+      - name: Run scalability benchmarks
+        run: |
+          python benchmark_runner.py --scalability --output benchmark_results.json
+      
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-results
+          path: benchmark_results.json
+
+  run-full-test-suite:
+    name: Run Full Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install -r test_requirements.txt
+      
+      - name: Run all tests
+        run: |
+          python test_runner.py --test-type all --output test_results.json
+      
+      - name: Run CI/CD checks
+        run: |
+          python test_runner.py --test-type all --ci-checks
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test_results.json
