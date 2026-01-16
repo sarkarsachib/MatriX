@@ -161,7 +161,19 @@ class KnowledgeBaseHitRateBenchmark:
         }
     
     def benchmark_knowledge_hit_rate(self, queries: List[str]) -> Dict[str, Any]:
-        """Test how often knowledge base is hit"""
+        """
+        Compute how often queries match both a knowledge-base topic and its definition.
+        
+        Parameters:
+            queries (List[str]): Query texts to evaluate against the instance's knowledge_base.
+        
+        Returns:
+            Dict[str, Any]: Summary with the following keys:
+                - total_queries: total number of queries evaluated.
+                - knowledge_hits: number of queries that contained both a topic name and its definition.
+                - hit_rate_percent: percentage of queries that were hits (0-100).
+                - hit_rate_score: hit rate as a 0-1 value.
+        """
         hits = 0
         total = len(queries)
         
@@ -182,7 +194,22 @@ class KnowledgeBaseHitRateBenchmark:
 
 
 def run_quality_benchmarks(config):
-    """Run all quality benchmarks"""
+    """
+    Execute the MatriX quality benchmark suite and collect their results.
+    
+    Runs response accuracy, confidence calibration, citation quality, and knowledge-base hit-rate benchmarks using built-in test inputs, prints a short progress summary for each, and returns an aggregated summary.
+    
+    Parameters:
+        config (Any): Optional runtime configuration for the benchmarks (currently unused by the function).
+    
+    Returns:
+        summary (dict): Aggregated results containing:
+            - 'timestamp': Unix timestamp of when the benchmarks were run.
+            - 'response_accuracy': Result dict from the response accuracy benchmark.
+            - 'confidence_calibration': Result dict from the confidence calibration benchmark.
+            - 'citation_quality': Result dict from the citation quality benchmark.
+            - 'knowledge_hit_rate': Result dict from the knowledge-base hit-rate benchmark.
+    """
     print("\n" + "="*80)
     print("Running Quality Benchmarks")
     print("="*80)

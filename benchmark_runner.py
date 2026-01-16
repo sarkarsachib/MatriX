@@ -37,7 +37,15 @@ class BenchmarkRunner:
         return results
     
     def run_quality_benchmarks(self, config: Dict[str, Any]) -> Dict[str, Any]:
-        """Run quality benchmarks"""
+        """
+        Execute the quality benchmark suite and return its results.
+        
+        Parameters:
+            config (Dict[str, Any]): Configuration dictionary (ignored by this runner; kept for API compatibility).
+        
+        Returns:
+            Dict[str, Any]: Mapping of quality benchmark results and metrics.
+        """
         from benchmarks.quality_benchmarks import run_quality_benchmarks
         
         print("\n" + "="*80)
