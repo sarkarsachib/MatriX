@@ -53,17 +53,17 @@ class TestRunner:
         if test_type in ['all', 'unit']:
             unit_dir = self.test_dirs['unit']
             if unit_dir.exists():
-                test_files.extend(list(unit_dir.glob('test_*.py'))))
+                test_files.extend(list(unit_dir.glob('test_*.py')))
         
         if test_type in ['all', 'integration']:
             integration_dir = self.test_dirs['integration']
             if integration_dir.exists():
-                test_files.extend(list(integration_dir.glob('test_*.py'))))
+                test_files.extend(list(integration_dir.glob('test_*.py')))
         
         if test_type in ['all', 'e2e']:
             e2e_dir = self.test_dirs['e2e']
             if e2e_dir.exists():
-                test_files.extend(list(e2e_dir.glob('test_*.py'))))
+                test_files.extend(list(e2e_dir.glob('test_*.py')))
         
         return test_files
     
@@ -98,9 +98,6 @@ class TestRunner:
     
     def run_pytest(self, test_files: List[str], markers: str = '') -> TestSuiteResult:
         """Run pytest on given test files"""
-        import pytest
-        
-        test_files_str = ' '.join(str(f) for f in test_files)
         
         cmd = [
             sys.executable,
@@ -112,7 +109,7 @@ class TestRunner:
         if markers:
             cmd.extend(['-m', markers])
         
-        cmd.extend(test_files_str)
+        cmd.extend([str(f) for f in test_files])
         
         start_time = time.time()
         result = subprocess.run(cmd, capture_output=True, text=True)

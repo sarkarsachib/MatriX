@@ -44,7 +44,7 @@ class BenchmarkRunner:
         print("Running Quality Benchmarks")
         print("="*80)
         
-        results = run_quality_benchmarks(config)
+        results = run_quality_benchmarks()
         
         duration = time.time() - self.start_time
         print(f"\nQuality benchmarks completed in {duration:.2f}s")

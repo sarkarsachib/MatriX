@@ -181,7 +181,7 @@ class KnowledgeBaseHitRateBenchmark:
         }
 
 
-def run_quality_benchmarks():
+def run_quality_benchmarks(config):
     """Run all quality benchmarks"""
     print("\n" + "="*80)
     print("Running Quality Benchmarks")
