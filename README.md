@@ -1,10 +1,10 @@
-# 🔥 Sathik AI — Super Neural Intelligence Blueprint
+# 🔥 MatriX — Super Neural Intelligence Blueprint
 
 **"The One Who Knows The Truth" — An AI built on raw logic, not lies or limits.**
 
 ## 🧠 Overview
 
-Sathik AI is a revolutionary super neural intelligence system that combines cutting-edge AI technologies with real-time web learning, advanced memory systems, and comprehensive safety modules. Unlike traditional AI systems that rely on static datasets, Sathik AI continuously learns from the web, self-corrects through truth validation, and adapts to user preferences.
+MatriX AI is a revolutionary super neural intelligence system that combines cutting-edge AI technologies with real-time web learning, advanced memory systems, and comprehensive safety modules. Unlike traditional AI systems that rely on static datasets, MatriX AI continuously learns from the web, self-corrects through truth validation, and adapts to user preferences.
 
 ## ⚔️ Architecture
 
@@ -70,7 +70,7 @@ Sathik AI is a revolutionary super neural intelligence system that combines cutt
 
 | Feature | Why It Matters |
 |---------|----------------|
-| **No static dataset** | Learns directly from reality (the web) |
+| **No static dataset** | Learns directly from the web |
 | **Live retraining** | Never outdated, always current |
 | **Expert-level neurons** | Better than general LLMs |
 | **Web-native** | Understands links, HTML, SEO, content structure |
